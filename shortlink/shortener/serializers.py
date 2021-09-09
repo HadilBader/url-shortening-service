@@ -1,9 +1,12 @@
 from rest_framework import serializers
-from shortener.models import URL
 
 
-class URLSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = URL
-        fields = ['long_version', 'short_version', 'created_at']
+# TODO: document this module
+class URLObjectSerializer(serializers.Serializer):
+    long_version = serializers.URLField()
+    short_version = serializers.URLField()
+    created_at = serializers.DateTimeField()
+
+class URLSerializer(serializers.Serializer):
+    url = serializers.URLField(required=True)
 

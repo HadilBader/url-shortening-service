@@ -1,14 +1,18 @@
-from django.db import models
+from datetime import datetime
 
 
-class URL(models.Model):
-    long_version = models.URLField(unique=True)
-    short_version = models.URLField(unique=True, max_length=7)
-    created_at = models.DateTimeField(auto_now_add=True)
+# TODO: document this class
+class URL:
+    id = 0
+
+    def __init__(self, long_version, short_version, created_at=datetime.now()):
+        self.long_version = long_version
+        self.short_version = short_version
+        self.created_at = created_at or datetime.now()
+        URL.id += 1
 
     def __str__(self):
         return f'''
             Original url: {self.long_version}
             Shortened version: {self.short_version}
         '''
-
