@@ -1,6 +1,4 @@
-# TODO: write package documentation
-# TODO: look into memory leaks and send message for user in case there isn't enough space for another URL object in memory
-
-'''
-
-'''
+"""
+This package is for the shortener app. It contains all models, views, classes, functions,
+and utility for providing the URL shortening service
+"""

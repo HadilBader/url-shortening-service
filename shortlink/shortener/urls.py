@@ -1,5 +1,5 @@
 from django.urls import path, re_path
-from shortener.views import *
+from shortener.views import encode, decode, redirect_url
 
 # TODO: document this module
 urlpatterns = [

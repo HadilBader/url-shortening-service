@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-import os
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -127,3 +127,12 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# DRF uses it's own datetime formatting, which is different from
+# the default string representation of a datetime object (ISO 8601)
+# The below settings forces DRF to use the same format
+REST_FRAMEWORK = {
+
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S.%f",
+
+}
