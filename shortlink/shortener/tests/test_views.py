@@ -79,7 +79,6 @@ class TestViews(TestCase):
         response = self.client.post(reverse('encode'), {'url': self.initial_url})
         self.assertEqual(response.status_code, 400)
 
-# TODO: figure out why 'http://testserver/ is not a valid URL
     def test_decode(self):
         """
         Ensures the client gets a 200 response with appropriate

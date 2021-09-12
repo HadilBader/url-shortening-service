@@ -1,1 +1,3 @@
-# TODO: document this package
+"""
+Project settings package
+"""

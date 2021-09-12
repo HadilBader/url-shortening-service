@@ -7,49 +7,50 @@ from django.http import Http404
 
 from rest_framework.decorators import api_view
 from rest_framework import status
+from rest_framework.validators import ValidationError
 
 from shortener.models import URL
 from shortener.serializers import URLObjectSerializer, ShortURLSerializer, LongURLSerializer
 from shortener.utils import encode_url
 
-
-# TODO: consider moving "urls" from views to a different file
 urls_dict = {}
 
 
-# TODO: consider psutil to track how much memory the server is using
 @api_view(['POST'])
 def encode(request):
     """
+    /encode endpoint:
+    Validates the received JSON, encodes it, and stores it in urls_dict
     """
-    serializer = LongURLSerializer(data=request.data)
-    if serializer.is_valid(raise_exception=True):
+    try:
+        long_url_serializer = LongURLSerializer(data=request.data)
+        long_url_serializer.is_valid(raise_exception=True)
         short_version = encode_url(request.build_absolute_uri('/'), URL.id)
-        long_version = serializer.validated_data['url']
+        long_version = long_url_serializer.validated_data['url']
         url = URL(long_version=long_version, short_version=short_version)
         urls_dict[short_version] = url
-        serializer = URLObjectSerializer(url)
-        return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
-    return JsonResponse(status=Http404)
+        object_serializer = URLObjectSerializer(url)
+        return JsonResponse(object_serializer.data, status=status.HTTP_201_CREATED)
+    except ValidationError:
+        return JsonResponse(long_url_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# TODO: consider returning status code 422 (instead of 400)
-#  if client does not send required parameter
-# TODO: consider supporting url parameters, although it would
-#  be awkward since the parameter itself is a url
-# TODO: consider supporting POST method for decoding
 @api_view(['GET'])
 def decode(request):
     """
+    /decode endpoint:
+    Validates the received parameter, decodes it, and sends it as
+    a JSON in the response's body
     """
     try:
-        serializer = ShortURLSerializer(data=request.query_params)
-        if serializer.is_valid(raise_exception=True):
-            short_version = serializer.validated_data['url']
-            url = urls_dict[short_version]
-            serializer = URLObjectSerializer(url)
-            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-        return JsonResponse(status=Http404)
+        short_url_serializer = ShortURLSerializer(data=request.query_params)
+        short_url_serializer.is_valid(raise_exception=True)
+        short_version = short_url_serializer.validated_data['url']
+        url = urls_dict[short_version]
+        url_object_serializer = URLObjectSerializer(url)
+        return JsonResponse(url_object_serializer.data, status=status.HTTP_200_OK)
+    except ValidationError:
+        return JsonResponse(short_url_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except KeyError:
         return JsonResponse({'url': 'Are you sure you encoded this URL?'},
                             status=status.HTTP_404_NOT_FOUND)
@@ -57,6 +58,8 @@ def decode(request):
 
 def redirect_url(request, **kwargs):
     """
+    / endpoint:
+    responsible for redirecting the client
     """
     try:
         url = urls_dict[request.build_absolute_uri()].long_version

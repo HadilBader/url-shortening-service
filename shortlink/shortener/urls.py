@@ -1,7 +1,10 @@
+"""
+This module is response for routing
+"""
 from django.urls import path, re_path
 from shortener.views import encode, decode, redirect_url
 
-# TODO: document this module
+
 urlpatterns = [
     path('encode', encode, name='encode'),
     path('decode', decode, name='decode'),
