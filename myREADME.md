@@ -16,14 +16,3 @@ http://localhost:8000/decode?url="http://localhost:8000/0"
 ###How to run the tests
 
 Type "python manage.py test" from the project's directory (shortlink) in the terminal. 
-
-#### More information
-
-- Project contains two packages: config and shortener. config contains the project's settings. The shortener is for the shortner app. It contains all models, views, routing, tests, and utility for implementing the shortening service.
-- The text file long_urls.txt contains long urls for testing. 
-- Since the assignment asked to keep the URLs in memory: in case you're performing custom tests on the service, monitor memory usage to avoid memory overload, as the program stores the URLs in memory rather than a DB.
-
-Thank you for taking the time to look at my code and consider my application!
-
-Regards, \
-Hadil 
